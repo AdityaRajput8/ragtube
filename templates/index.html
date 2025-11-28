@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAGTube: AI Teaching Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00ff88;
+            --primary-dark: #00cc6a;
+            --primary-light: #33ffa3;
+            --pitch-black: #000000;
+            --dark-bg: #0a0a0a;
+            --dark-card: #111111;
+            --dark-border: #222222;
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+            --radius: 12px;
+            --glow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background-color: var(--pitch-black);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 255, 136, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 85% 30%, rgba(0, 255, 136, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 50% 80%, rgba(0, 255, 136, 0.03) 0%, transparent 20%);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--primary), transparent);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: var(--glow);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 255, 136, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto 25px;
+        }
+
+        .feature-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .feature-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius);
+            border: 1px solid var(--dark-border);
+            transition: all 0.3s ease;
+            cursor: default;
+            max-width: 160px;
+            text-align: center;
+        }
+
+        .feature-button:hover {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: rgba(0, 255, 136, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 255, 136, 0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .feature-text {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .card {
+            background-color: var(--dark-card);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--dark-border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 255, 136, 0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.1);
+            background: rgba(0, 255, 136, 0.25);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 16px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--dark-border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.2);
+        }
+
+        button {
+            padding: 16px 28px;
+            background-color: var(--primary);
+            color: #000;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 255, 136, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .button-full {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .button-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            box-shadow: none;
+        }
+
+        .button-outline:hover {
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .flex-container {
+            display: flex;
+            gap: 15px;
+        }
+
+        .flex-container input {
+            flex: 1;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .action-buttons button {
+            flex: 1;
+        }
+
+        #loading {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(0, 255, 136, 0.1);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            text-align: center;
+            color: var(--primary);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .ai-answer {
+            background-color: rgba(0, 255, 136, 0.08);
+            padding: 24px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            margin-bottom: 30px;
+            white-space: pre-line;
+            line-height: 1.7;
+            position: relative;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .ai-answer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+            border-radius: var(--radius) 0 0 var(--radius);
+        }
+
+        .ai-answer h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .ai-answer h3 i {
+            font-size: 20px;
+        }
+
+        .result-card {
+            background-color: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result-card:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+
+        .timestamp {
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .timestamp:hover {
+            color: var(--primary-light);
+            text-decoration: underline;
+            transform: scale(1.05);
+        }
+
+        .snippet {
+            color: var(--text-secondary);
+            margin-top: 8px;
+            font-size: 0.95rem;
+        }
+
+        .sources-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 30px 0 15px 0;
+            color: var(--text-secondary);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--dark-border);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .flex-container {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .feature-buttons {
+                gap: 10px;
+            }
+            
+            .feature-button {
+                max-width: 120px;
+                padding: 12px 15px;
+            }
+            
+            .feature-text {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-play-circle"></i>
+            </div>
+        </div>
+        <h1>RAGTUBE</h1>
+        <p class="subtitle">Transform your YouTube learning experience. Ask questions about any educational video and get instant summaries with precise timestamps.</p>
+        
+        <div class="feature-buttons">
+            <div class="feature-button">
+                <div class="feature-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="feature-text">Ask Questions</div>
+            </div>
+            <div class="feature-button">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="feature-text">Get Timestamps</div>
+            </div>
+            <div class="feature-button">
+                <div class="feature-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <div class="feature-text">Start Learning</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">
+                <i class="fas fa-video"></i>
+            </div>
+            <h2>Paste Video Link</h2>
+        </div>
+        
+        <div class="input-group">
+            <label for="videoUrl">Simply add any educational YouTube video URL</label>
+            <input type="text" id="videoUrl" placeholder="Paste YouTube URL here...">
+        </div>
+        
+        <button class="button-full" onclick="processVideo()">
+            <i class="fas fa-cloud-download-alt"></i>
+            Load Video
+        </button>
+        
+        <div id="loading">
+            <div class="spinner"></div>
+            <span>Processing video transcript and creating index...</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">
+                <i class="fas fa-comments"></i>
+            </div>
+            <h2>Ask Questions</h2>
+        </div>
+        
+        <div class="input-group">
+            <label for="query">Query specific topics or sections from the video</label>
+            <div class="flex-container">
+                <input type="text" id="query" placeholder="E.g., What is the main conclusion?">
+                <button onclick="askQuestion()">
+                    <i class="fas fa-paper-plane"></i>
+                    Ask AI
+                </button>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="button-outline" onclick="summarizeVideo()">
+                    <i class="fas fa-file-alt"></i>
+                    Summarize Video
+                </button>
+                <button class="button-outline" onclick="askQuestion('What are the key points in this video?')">
+                    <i class="fas fa-list"></i>
+                    Key Points
+                </button>
+            </div>
+        </div>
+        
+        <div id="resultsArea"></div>
+    </div>
+    
+    <div class="footer">
+        <p>RAGTube Assistant &copy; 2023 | AI-Powered Learning</p>
+    </div>
+</div>
+
+<script>
+    async function processVideo() {
+        const url = document.getElementById('videoUrl').value;
+        const status = document.getElementById('loading');
+        status.style.display = 'block';
+        status.innerHTML = '<div class="spinner"></div><span>Downloading & Indexing... (This takes 10-20 seconds)</span>';
+
+        try {
+            const response = await fetch('/ingest', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({url: url})
+            });
+            const data = await response.json();
+            
+            if (response.ok) {
+                status.innerHTML = '<i class="fas fa-check-circle"></i> Success! ' + data.message;
+            } else {
+                status.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error: ' + data.error;
+            }
+        } catch (error) {
+            status.innerHTML = '<i class="fas fa-exclamation-circle"></i> Network/Server Error: ' + error.message;
+            console.error(error);
+        }
+    }
+
+    async function askQuestion(questionText = null) {
+        const query = questionText || document.getElementById('query').value;
+        const resultsDiv = document.getElementById('resultsArea');
+        resultsDiv.innerHTML = '<div style="text-align: center; padding: 30px;"><div class="spinner" style="width: 30px; height: 30px; margin-bottom: 15px;"></div><p>Thinking... Generating answer based on video content</p></div>';
+
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({query: query})
+            });
+
+            const data = await response.json();
+            resultsDiv.innerHTML = ""; 
+
+            if (!response.ok) {
+                resultsDiv.innerHTML = `<div style="color: #ff6b6b; text-align: center; padding: 20px;"><i class="fas fa-exclamation-triangle"></i> Error: ${data.error}</div>`;
+                return;
+            }
+
+            // 1. Show the Main AI Answer
+            if (data.answer) {
+                const answerBox = document.createElement('div');
+                answerBox.className = 'ai-answer';
+                answerBox.innerHTML = `<h3><i class="fas fa-robot"></i> AI Answer</h3><p>${data.answer}</p>`;
+                resultsDiv.appendChild(answerBox);
+            }
+
+            // 2. Show Sources (Citations)
+            if (data.sources && data.sources.length > 0) {
+                const sourceHeader = document.createElement('div');
+                sourceHeader.className = 'sources-header';
+                sourceHeader.innerHTML = `<i class="fas fa-link"></i><h3>Reference Timestamps</h3>`;
+                resultsDiv.appendChild(sourceHeader);
+
+                data.sources.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'result-card';
+                    card.innerHTML = `
+                        <p>
+                            <a href="${item.link}" target="_blank" class="timestamp">
+                                <i class="fas fa-play-circle"></i>
+                                ${item.time_display}
+                            </a>
+                        </p>
+                        <p class="snippet">${item.snippet}</p>
+                    `;
+                    resultsDiv.appendChild(card);
+                });
+            }
+
+        } catch (error) {
+            resultsDiv.innerHTML = `<div style="color: #ff6b6b; text-align: center; padding: 20px;"><i class="fas fa-exclamation-triangle"></i> Frontend Error: ${error.message}</div>`;
+        }
+    }
+
+    function summarizeVideo() {
+        // Set the query to "summarize the video" and trigger the askQuestion function
+        askQuestion('Summarize the video content');
+    }
+</script>
+
+</body>
+</html>
