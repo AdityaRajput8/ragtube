@@ -7,12 +7,11 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.docstore.document import Document
 from langchain_core.prompts import ChatPromptTemplate
+from dotenv import load_dotenv 
+load_dotenv()
 
 # --- CONFIGURATION ---
-
-# (For Vercel later, you will change this back to os.getenv, but let's make it work locally first)
-MY_GOOGLE_KEY = "AIzaSyAnFkCjOYVBSMEuAxl0BjEtok1V4onnFiE"
-
+MY_GOOGLE_KEY = os.getenv("GOOGLE_API_KEY")
 # 1. Setting up the embedding
 EMBEDDING_MODEL = GoogleGenerativeAIEmbeddings(
     model="models/text-embedding-004", 

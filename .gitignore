@@ -1,2 +1,18 @@
+# Secrets (CRITICAL)
 .env
+KEYS.txt
+secrets.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
 venv/
+env/
+.venv/
+
+# Mac OS specific (Since you are on a Mac)
+.DS_Store
+
+# Vector Store (Optional: If the index is huge, ignore it. If small, you can keep it)
+# faiss_index/
