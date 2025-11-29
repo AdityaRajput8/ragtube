@@ -11,7 +11,7 @@ from langchain_core.prompts import ChatPromptTemplate
 # --- CONFIGURATION ---
 
 # (For Vercel later, you will change this back to os.getenv, but let's make it work locally first)
-MY_GOOGLE_KEY = "AIzaSyCeOVdMAIg283eL0xeUQ4VC9aYVSdlS7ps"
+MY_GOOGLE_KEY = "AIzaSyAnFkCjOYVBSMEuAxl0BjEtok1V4onnFiE"
 
 # 1. Setting up the embedding
 EMBEDDING_MODEL = GoogleGenerativeAIEmbeddings(
