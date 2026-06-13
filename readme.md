@@ -1,13 +1,3 @@
-# 🚀 NavGurukul Pre-work: RagTube Case Study
-
-**Candidate:** Aditya Raj
-**Role:** AI Engineer
-**Submission Option:** Option 1 (Deep Dive)
-
-> **Note:** This document contains the technical analysis required for the pre-work. For installation instructions, scroll to the "Setup Guide" section at the bottom.
-
----
-
 ## 📺 Video Walkthrough
 [**▶️ Watch the 1-Minute Demo**](https://drive.google.com/file/d/1jaw-UZG0WLCxVLac9twWWp8NggY3uQme/view?usp=drive_link)
 
